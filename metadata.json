@@ -1,0 +1,6 @@
+{
+  "name": "Gifti Club - Regalos Curados y Detalles Personalizados",
+  "description": "Tienda oficial de Gifti Club México. Regalos curados, detalles personalizados para amantes de las mascotas, envoltorios de lujo y sincronización en tiempo real.",
+  "requestFramePermissions": ["notifications"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

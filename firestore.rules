@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'ivan.sosa030394@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. Users collection
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) &&
+        isValidId(userId) &&
+        incoming().uid == userId &&
+        incoming().email is string && incoming().email.size() <= 256;
+      allow update: if (isOwner(userId) || isAdmin()) &&
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email;
+      allow delete: if isAdmin();
+
+      // Subcollection: Cart Items
+      match /cart/{cartItemId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) &&
+          isValidId(cartItemId) &&
+          incoming().userId == userId &&
+          incoming().price is number && incoming().price >= 0 &&
+          incoming().quantity is number && incoming().quantity > 0;
+        allow delete: if isOwner(userId);
+      }
+
+      // Subcollection: Wishlist Items
+      match /wishlist/{productId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) &&
+          isValidId(productId) &&
+          incoming().userId == userId &&
+          incoming().productId is string && incoming().productId.size() <= 64;
+        allow delete: if isOwner(userId);
+      }
+
+      // Subcollection: Notifications
+      match /notifications/{notificationId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) || isAdmin();
+        allow update: if isOwner(userId) &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['read']);
+        allow delete: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // 2. Orders collection
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() &&
+        isValidId(orderId) &&
+        incoming().userId == request.auth.uid &&
+        incoming().total is number && incoming().total >= 0 &&
+        incoming().customerEmail is string && incoming().customerEmail.size() <= 256;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "name": "Gifti Club Dawn OS 2.0 Storefront",
+  "sections": {
+    "announcement_bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "color_scheme": "accent-1",
+        "text_alignment": "center",
+        "free_shipping_threshold": 1200,
+        "currency": "MXN"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_position": "top-center",
+        "menu": "main-menu",
+        "sticky_header_type": "on-scroll-up",
+        "enable_country_selector": true
+      }
+    },
+    "hero_banner": {
+      "type": "image-banner",
+      "settings": {
+        "heading": "Regalos que hablan, emociones que trascienden",
+        "subheading": "Curados y personalizados con grabado artesanal en México",
+        "primary_cta_label": "Arma tu Regalo en 3 Pasos",
+        "primary_cta_link": "#gift-builder",
+        "secondary_cta_label": "Explorar Catálogo",
+        "secondary_cta_link": "#catalogo"
+      }
+    },
+    "value_propositions": {
+      "type": "rich-text-grid",
+      "blocks": {
+        "shipping": {
+          "type": "feature_column",
+          "settings": {
+            "title": "Envío Rápido a Todo México",
+            "text": "Cobertura con FedEx y DHL Express. Rastreo en tiempo real."
+          }
+        },
+        "engraving": {
+          "type": "feature_column",
+          "settings": {
+            "title": "Grabado Láser Artesanal",
+            "text": "Precisión de 1200 DPI con el nombre de tu mascota o persona favorita."
+          }
+        },
+        "packaging": {
+          "type": "feature_column",
+          "settings": {
+            "title": "Empaque de Regalo de Lujo",
+            "text": "Caja rígida azul noche, lazo coral y sello de cera."
+          }
+        },
+        "warranty": {
+          "type": "feature_column",
+          "settings": {
+            "title": "Garantía de Satisfacción 100%",
+            "text": "Si algo no es perfecto, lo reemplazamos sin costo."
+          }
+        }
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Colección Curada de Regalos",
+        "collection": "all",
+        "products_to_show": 16,
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "enable_quick_view": true,
+        "show_secondary_image": true,
+        "show_vendor": true,
+        "show_rating": true
+      }
+    },
+    "gift_builder_module": {
+      "type": "custom-liquid",
+      "settings": {
+        "module_id": "gift-builder-step-by-step",
+        "steps_count": 3,
+        "enable_live_preview": true
+      }
+    },
+    "testimonials_carousel": {
+      "type": "testimonials",
+      "settings": {
+        "title": "Lo que dicen nuestros clientes en México",
+        "show_verified_badge": true
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "color_scheme": "background-2",
+        "newsletter_enable": true,
+        "payment_enable": true,
+        "payment_methods": ["visa", "mastercard", "amex", "oxxo", "mercadopago", "kueski"]
+      }
+    }
+  },
+  "order": [
+    "announcement_bar",
+    "header",
+    "hero_banner",
+    "value_propositions",
+    "featured_collection",
+    "gift_builder_module",
+    "testimonials_carousel",
+    "footer"
+  ]
+}

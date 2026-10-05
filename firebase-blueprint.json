@@ -1,0 +1,117 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with personal settings and address",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "phoneNumber": { "type": "string", "maxLength": 30 },
+        "pushEnabled": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "CartItem": {
+      "title": "CartItem",
+      "description": "Item in user shopping cart",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 150 },
+        "price": { "type": "number" },
+        "quantity": { "type": "number" },
+        "image": { "type": "string", "maxLength": 1024 },
+        "customText": { "type": "string", "maxLength": 100 },
+        "giftWrap": { "type": "boolean" },
+        "giftNote": { "type": "string", "maxLength": 250 },
+        "recipientName": { "type": "string", "maxLength": 100 },
+        "selectedVariant": { "type": "string", "maxLength": 100 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "productId", "title", "price", "quantity"]
+    },
+    "WishlistItem": {
+      "title": "WishlistItem",
+      "description": "Saved product in user wishlist",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 150 },
+        "price": { "type": "number" },
+        "image": { "type": "string", "maxLength": 1024 },
+        "category": { "type": "string", "maxLength": 64 },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "productId", "title", "price"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Personalized push and in-app notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 120 },
+        "body": { "type": "string", "maxLength": 500 },
+        "type": { "type": "string", "enum": ["order", "abandoned_cart", "promo", "shipping", "welcome"] },
+        "read": { "type": "boolean" },
+        "actionUrl": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "title", "body", "type", "read"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "customerEmail": { "type": "string", "maxLength": 256 },
+        "customerName": { "type": "string", "maxLength": 120 },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "giftWrapTotal": { "type": "number" },
+        "shippingCost": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string", "maxLength": 50 },
+        "shippingAddress": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["confirmado", "preparando", "enviado", "entregado"] },
+        "trackingNumber": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "customerEmail", "customerName", "total", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile with private settings"
+    },
+    "/users/{userId}/cart/{cartItemId}": {
+      "schema": "CartItem",
+      "description": "User synchronized cart items in real time"
+    },
+    "/users/{userId}/wishlist/{productId}": {
+      "schema": "WishlistItem",
+      "description": "User synchronized wishlist items"
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User notifications for orders, shipping, and promos"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders record"
+    }
+  }
+}

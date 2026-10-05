@@ -1,0 +1,110 @@
+{% comment %}
+  Shopify Dawn OS 2.0 - Quick View Modal Snippet
+  Allows viewing full product details and adding to cart without navigating away from the catalog
+{% endcomment %}
+
+<div id="QuickView-{{ product.id }}" class="quick-view-modal modal micromodal-slide" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+    <div class="modal__container bg-white rounded-3xl max-w-4xl w-full p-6 shadow-2xl relative" role="dialog" aria-modal="true" aria-labelledby="modal-title-{{ product.id }}">
+      
+      <button class="modal__close absolute top-4 right-4 p-2 text-slate-500 hover:text-black rounded-full" aria-label="Close modal" data-micromodal-close>
+        &times;
+      </button>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <!-- Media Gallery -->
+        <div class="product-media-gallery">
+          <div class="main-image aspect-square rounded-2xl overflow-hidden bg-slate-100">
+            <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title | escape }}" loading="lazy" class="w-full h-full object-cover">
+          </div>
+          {% if product.images.size > 1 %}
+            <div class="thumbnail-list flex gap-2 mt-3 overflow-x-auto">
+              {% for image in product.images %}
+                <button class="thumbnail w-14 h-14 rounded-xl overflow-hidden border">
+                  <img src="{{ image | image_url: width: 120 }}" alt="{{ image.alt | escape }}">
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Product Information & Form -->
+        <div class="product-details space-y-4">
+          <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">{{ product.type | default: 'Regalo Curado' }}</span>
+          <h2 id="modal-title-{{ product.id }}" class="text-2xl font-black text-[#0B1B3D]">{{ product.title }}</h2>
+
+          <!-- Price -->
+          <div class="price-box flex items-baseline gap-2 bg-slate-50 p-3 rounded-2xl">
+            <span class="text-2xl font-bold text-[#0B1B3D]">{{ product.price | money_with_currency }}</span>
+            {% if product.compare_at_price > product.price %}
+              <s class="text-sm text-slate-400">{{ product.compare_at_price | money }}</s>
+              <span class="badge bg-[#E06A55] text-white text-xs px-2 py-0.5 rounded font-bold">Oferta</span>
+            {% endif %}
+          </div>
+
+          <!-- Add to Cart Form without page reload -->
+          {% form 'product', product, id: 'quick-add-form', class: 'space-y-4' %}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            
+            {% if product.metafields.custom.is_customizable %}
+              <div class="customization-field bg-orange-50/50 p-3 rounded-xl border border-orange-200">
+                <label for="CustomText-{{ product.id }}" class="block text-xs font-bold text-[#0B1B3D] mb-1">
+                  Texto o Nombre a Grabar:
+                </label>
+                <input type="text" id="CustomText-{{ product.id }}" name="properties[Grabado Personalizado]" maxlength="30" placeholder="Ej. LUNA" class="w-full text-xs p-2 border rounded-lg">
+              </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3">
+              <div class="quantity-selector flex items-center border rounded-xl overflow-hidden">
+                <button type="button" class="px-3 py-2 text-xs font-bold">-</button>
+                <input type="number" name="quantity" value="1" min="1" class="w-12 text-center text-xs font-bold">
+                <button type="button" class="px-3 py-2 text-xs font-bold">+</button>
+              </div>
+
+              <button type="submit" name="add" class="flex-1 bg-[#E06A55] hover:bg-[#c95844] text-white text-xs font-bold py-3 px-6 rounded-2xl shadow-lg transition-all">
+                Agregar a la Bolsa • {{ product.price | money }}
+              </button>
+            </div>
+
+            <!-- Wishlist Button within Quick View without closing modal -->
+            <button type="button" class="btn-wishlist-toggle w-full py-2.5 px-4 rounded-2xl border border-slate-300 hover:border-[#E06A55] text-slate-700 hover:text-[#E06A55] text-xs font-bold flex items-center justify-center gap-2 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              <span>Guardar en Favoritos</span>
+            </button>
+          {% endform %}
+
+          <!-- Estimated Shipping Section -->
+          <div class="shipping-estimator p-3 rounded-2xl bg-slate-50 border text-xs space-y-1.5">
+            <div class="flex items-center justify-between font-bold text-[#0B1B3D]">
+              <span>🚚 Envío Estimado a México:</span>
+              <span class="text-emerald-700">Llega en 2 a 4 días</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Calculado para CDMX, GDL, MTY y todo el país por FedEx y DHL.</p>
+          </div>
+
+          <!-- Dynamic Reviews Snippet -->
+          <div class="dynamic-reviews-box border-t pt-3 space-y-2 text-xs">
+            <div class="flex items-center justify-between font-bold text-[#0B1B3D]">
+              <span>Reseñas de Clientes Verificados ({{ product.metafields.reviews.rating_count | default: 128 }})</span>
+              <span class="text-amber-500 font-bold">★ 4.9 / 5.0</span>
+            </div>
+          </div>
+
+          <!-- Accordion details -->
+          <div class="accordions border-t pt-3 space-y-2 text-xs text-slate-600">
+            <details class="cursor-pointer">
+              <summary class="font-bold text-[#0B1B3D]">Envío Rápido a Todo México</summary>
+              <p class="pt-1 text-[11px]">Envío seguro con FedEx y DHL. Envío Gratis en compras mayores a $1,200 MXN.</p>
+            </details>
+            <details class="cursor-pointer">
+              <summary class="font-bold text-[#0B1B3D]">Garantía de Satisfacción 100%</summary>
+              <p class="pt-1 text-[11px]">Revisión artesanal de cada pieza y reemplazo garantizado si hay algún desperfecto.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
